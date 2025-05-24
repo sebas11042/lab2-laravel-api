@@ -12,4 +12,7 @@ Route::get('/test', function () {
 Route::apiResource('profesores', ProfesorController::class);
 Route::apiResource('cursos', CursoController::class);
 Route::apiResource('aulas', AulaController::class);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
