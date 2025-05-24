@@ -1,0 +1,10 @@
+### Registrar usuario
+POST http://127.0.0.1:8000/api/register
+Content-Type: application/json
+
+{
+  "name": "Sebastián",
+  "email": "sebas@example.com",
+  "password": "1234",
+  "password_confirmation": "1234"
+}
