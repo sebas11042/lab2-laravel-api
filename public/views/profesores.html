@@ -4,8 +4,59 @@
     <meta charset="UTF-8">
     <title>Gestión de Profesores</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(135deg, #1e3c72, #2a5298, #6a11cb);
+        color: #f8f9fa;
+        transition: background 0.5s ease;
+        min-height: 100vh;
+    }
+
+    h2 {
+        color: #fdfdfd;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-control, .btn {
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 8px #0dcaf0;
+        border-color: #0dcaf0;
+    }
+
+    .btn:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .table {
+        background-color: rgba(0, 0, 0, 0.3);
+        color: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background-color: #0dcaf0;
+        color: #000;
+    }
+
+    .container {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .navbar {
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+    }
+</style>
+
 </head>
-<body class="bg-light">
+<body>
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
@@ -27,7 +78,6 @@
 <div class="container mt-3">
     <h2 class="mb-4 text-center">Gestión de Profesores</h2>
 
-    <!-- Formulario -->
     <form id="form-profesor" class="mb-4">
         <input type="hidden" id="profesorId">
         <div class="row g-3">
@@ -45,9 +95,8 @@
         <button type="button" class="btn btn-secondary mt-3 ms-2" id="btn-cancelar" style="display:none;">Cancelar edición</button>
     </form>
 
-    <!-- Tabla -->
     <table class="table table-bordered table-striped">
-        <thead class="table-dark">
+        <thead>
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
@@ -129,8 +178,7 @@ function editarProfesor(id) {
 
 function eliminarProfesor(id) {
     if (confirm("¿Estás seguro de eliminar este profesor?")) {
-        fetch(`${API_URL}/${id}`, { method: "DELETE" })
-            .then(() => cargarProfesores());
+        fetch(`${API_URL}/${id}`, { method: "DELETE" }).then(() => cargarProfesores());
     }
 }
 

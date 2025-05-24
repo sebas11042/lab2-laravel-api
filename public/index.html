@@ -1,92 +1,189 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Panel Principal | Sistema de Gestión</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(to right, #f8f9fa, #e9ecef);
-            transition: background-color 0.5s ease;
-        }
+  <meta charset="UTF-8">
+  <title>CineGestión | Panel Principal</title>
 
-        .main-container {
-            text-align: center;
-            padding: 60px 20px;
-        }
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-        .main-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #343a40;
-        }
+  <style>
+    body {
+      margin: 0;
+      padding-top: 80px; /* espacio para navbar */
+      background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460, #6a11cb);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
 
-        .main-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            color: #6c757d;
-        }
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
 
-        .main-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
+    .logo-ucr {
+      width: 300px;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
 
-        .main-image:hover {
-            transform: scale(1.02);
-        }
+    .logo-ucr:hover {
+      transform: scale(1.05);
+    }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #888;
-            font-size: 0.9rem;
-        }
+    .card {
+      background-color: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: white;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideFadeIn 0.8s ease forwards;
+    }
 
-        .nav-link {
-            transition: color 0.3s ease;
-        }
+    .card-hover:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease-in-out;
+    }
 
-        .nav-link:hover {
-            color: #0d6efd !important;
-        }
-    </style>
+    .card-delay-1 { animation-delay: 0.3s; }
+    .card-delay-2 { animation-delay: 0.6s; }
+    .card-delay-3 { animation-delay: 0.9s; }
+
+    @keyframes slideFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .icon {
+      font-size: 3rem;
+      color: #00d9ff;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: zoomIn 1s ease-in-out;
+    }
+
+    .header-container h1 {
+      text-align: center;
+      font-size: 2.5rem;
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .btn {
+      font-weight: bold;
+    }
+    .navbar .nav-link {
+  color: #ffffff !important;
+  font-weight: 600;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+  color: #ffc107 !important; /* amarillo brillante al pasar el mouse */
+}
+
+  </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">Recinto Siquirres</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarMenu">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="views/profesores.html">Profesores</a></li>
-                <li class="nav-item"><a class="nav-link" href="views/cursos.html">Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="views/aulas.html">Aulas</a></li>
-            </ul>
-        </div>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="
+    background: linear-gradient(to right, #1a1a2e, #0f3460, #6a11cb);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="index.html">CineGestión</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="views/profesores.html">Profesores</a></li>
+        <li class="nav-item"><a class="nav-link" href="views/cursos.html">Cursos</a></li>
+        <li class="nav-item"><a class="nav-link" href="views/aulas.html">Aulas</a></li>
+      </ul>
     </div>
+  </div>
 </nav>
 
-<!-- Contenido principal -->
-<div class="main-container">
-    <h1 class="main-title">Bienvenido al recinto de Siquirres</h1>
-    <p class="main-subtitle">Gestioná profesores, cursos y aulas fácilmente desde este panel</p>
-    <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914" alt="Gestión educativa" class="main-image img-fluid">
+<!-- CONTENIDO -->
+<div class="header-container">
+  <h1>CineGestión Académica</h1>
 </div>
 
-<footer>
-    © 2025 CineGestión - Proyecto Laravel | UCR
-</footer>
+<div class="container py-3 text-center">
+  <p class="mb-5 lead">Sistema web para gestionar profesores, cursos y aulas</p>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <div class="row justify-content-center g-4">
+    <div class="col-md-4">
+      <div class="card shadow card-hover card-delay-1">
+        <div class="card-body">
+          <i class="bi bi-journal-code icon"></i>
+          <h5 class="card-title mt-3">Cursos</h5>
+          <p class="card-text">Ver, crear, editar y eliminar cursos académicos.</p>
+          <a href="views/cursos.html" class="btn btn-primary mt-2">Ir a Cursos</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow card-hover card-delay-2">
+        <div class="card-body">
+          <i class="bi bi-person-badge icon"></i>
+          <h5 class="card-title mt-3">Profesores</h5>
+          <p class="card-text">Gestioná el listado de docentes asignados.</p>
+          <a href="views/profesores.html" class="btn btn-success mt-2">Ir a Profesores</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow card-hover card-delay-3">
+        <div class="card-body">
+          <i class="bi bi-building icon"></i>
+          <h5 class="card-title mt-3">Aulas</h5>
+          <p class="card-text">Visualizá y asigná aulas a tus cursos.</p>
+          <a href="views/aulas.html" class="btn btn-info text-white mt-2">Ir a Aulas</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center">
+    <p>© 2025 CineGestión. Todos los derechos reservados.</p>
+  </footer>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
