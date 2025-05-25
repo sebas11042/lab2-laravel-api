@@ -36,8 +36,10 @@
     </style>
 </head>
 <body>
-    <h1>Reporte de Cursos</h1>
-
+    <div class="header">
+<img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('img/Logo_UCR.png'))) }}" alt="Logo UCR" style="height: 100px;">
+        <div class="title">Cursos disponibles</div>
+    </div>
     <table>
         <thead>
             <tr>
