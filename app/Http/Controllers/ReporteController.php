@@ -13,21 +13,20 @@ class ReporteController extends Controller
     {
         $cursos = Curso::all();
         $pdf = Pdf::loadView('pdf.reporte_cursos', compact('cursos'));
-        return $pdf->download('reporte_cursos.pdf');
+        return $pdf->stream('reporte_cursos.pdf'); // 👈 Mostrar en el navegador
     }
 
     public function exportarProfesores()
     {
         $profesores = Profesor::all();
         $pdf = Pdf::loadView('pdf.reporte_profesores', compact('profesores'));
-        return $pdf->download('reporte_profesores.pdf');
+        return $pdf->stream('reporte_profesores.pdf');
     }
 
     public function exportarAulas()
     {
         $aulas = Aula::all();
         $pdf = Pdf::loadView('pdf.reporte_aulas', compact('aulas'));
-        return $pdf->download('reporte_aulas.pdf');
+        return $pdf->stream('reporte_aulas.pdf');
     }
 }
-

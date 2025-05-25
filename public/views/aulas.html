@@ -69,14 +69,16 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="../index.html">Recinto Siquirres</a>
+<a class="navbar-brand" href="/index.html">
+  <img src="/img/Logo_UCR.png" alt="Logo" style="height: 75px;">
+</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="profesores.html">Profesores</a></li>
         <li class="nav-item"><a class="nav-link" href="cursos.html">Cursos</a></li>
+        <li class="nav-item"><a class="nav-link" href="profesores.html">Profesores</a></li>
         <li class="nav-item"><a class="nav-link" href="aulas.html">Aulas</a></li>
         <li class="nav-item"><a class="nav-link" href="#" onclick="cerrarSesion()">Cerrar sesión</a></li>
       </ul>
@@ -86,6 +88,13 @@
 
 <div class="container mt-3">
   <h2 class="mb-4 text-center">Gestión de Aulas</h2>
+
+  <div class="text-end mb-3">
+  <a href="http://127.0.0.1:8000/api/reporte/aulas" target="_blank" class="btn btn-success">
+    📄 Exportar PDF
+  </a>
+</div>
+
 
   <form id="form-aula" class="mb-4">
     <input type="hidden" id="aulaId">
