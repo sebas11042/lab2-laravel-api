@@ -21,4 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/test-profesores', [TestController::class, 'index']); // ✅ esta es la nueva prueba
     Route::apiResource('aulas', AulaController::class);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/reporte/cursos', [ReporteController::class, 'exportarCursos']);
+    Route::get('/reporte/profesores', [ReporteController::class, 'exportarProfesores']);
+    Route::get('/reporte/aulas', [ReporteController::class, 'exportarAulas']);
+
 });
