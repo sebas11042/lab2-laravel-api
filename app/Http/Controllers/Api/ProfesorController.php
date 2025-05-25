@@ -8,16 +8,21 @@ use Illuminate\Http\Request;
 
 class ProfesorController extends Controller
 {
+    
     public function index()
     {
-        return response()->json(Profesor::all());
+        return Profesor::all();
     }
+
+
+
+
 
     public function store(Request $request)
     {
         $request->validate([
             'nombre' => 'required|string',
-            'correo' => 'required|email|unique:profesors',
+            'correo' => 'required|email|unique:profesores',
             'especialidad' => 'required|string',
         ]);
 

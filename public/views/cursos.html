@@ -13,7 +13,6 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
     }
-
     .navbar {
       position: fixed;
       top: 0;
@@ -23,49 +22,40 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     }
-
     .navbar .nav-link {
       color: #ffffff !important;
       font-weight: 600;
       text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
       transition: color 0.3s ease;
     }
-
     .navbar .nav-link:hover {
       color: #ffc107 !important;
     }
-
     h2 {
       color: #fdfdfd;
       text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
     }
-
     .form-control, .btn {
       transition: all 0.3s ease;
     }
-
     .form-control:focus {
       box-shadow: 0 0 8px #0dcaf0;
       border-color: #0dcaf0;
     }
-
     .btn:hover {
       transform: scale(1.03);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     }
-
     .table {
       background-color: rgba(0, 0, 0, 0.3);
       color: #f8f9fa;
       border-radius: 10px;
       overflow: hidden;
     }
-
     .table thead {
       background-color: #0dcaf0;
       color: #000;
     }
-
     .container {
       background-color: rgba(0, 0, 0, 0.2);
       padding: 30px;
@@ -88,6 +78,7 @@
         <li class="nav-item"><a class="nav-link" href="profesores.html">Profesores</a></li>
         <li class="nav-item"><a class="nav-link" href="cursos.html">Cursos</a></li>
         <li class="nav-item"><a class="nav-link" href="aulas.html">Aulas</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
       </ul>
     </div>
   </div>
@@ -129,28 +120,50 @@
 
 <script>
 const API_URL = "http://127.0.0.1:8000/api/cursos";
+const token = localStorage.getItem("token");
 
+// Redirigir si no hay token
+if (!token) {
+  alert("Debes iniciar sesión.");
+  window.location.href = "login.html";
+}
+
+// Headers con token
+function getHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
+}
+
+// Cargar cursos
 function cargarCursos() {
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      const tabla = document.getElementById("tabla-cursos");
-      tabla.innerHTML = "";
-      data.forEach(c => {
-        tabla.innerHTML += `
-          <tr>
-            <td>${c.id}</td>
-            <td>${c.nombre}</td>
-            <td>${c.codigo}</td>
-            <td>${c.creditos}</td>
-            <td>
-              <button class="btn btn-sm btn-warning" onclick="editarCurso(${c.id})">Editar</button>
-              <button class="btn btn-sm btn-danger ms-2" onclick="eliminarCurso(${c.id})">Eliminar</button>
-            </td>
-          </tr>
-        `;
-      });
+  fetch(API_URL, {
+    headers: getHeaders()
+  })
+  .then(res => res.json())
+  .then(data => {
+    const tabla = document.getElementById("tabla-cursos");
+    tabla.innerHTML = "";
+    data.forEach(c => {
+      tabla.innerHTML += `
+        <tr>
+          <td>${c.id}</td>
+          <td>${c.nombre}</td>
+          <td>${c.codigo}</td>
+          <td>${c.creditos}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarCurso(${c.id})">Editar</button>
+            <button class="btn btn-sm btn-danger ms-2" onclick="eliminarCurso(${c.id})">Eliminar</button>
+          </td>
+        </tr>
+      `;
     });
+  })
+  .catch(err => {
+    console.error("Error al cargar cursos:", err);
+    alert("Error al cargar cursos. Verifica el token o vuelve a iniciar sesión.");
+  });
 }
 
 document.getElementById("form-curso").addEventListener("submit", function(e) {
@@ -168,7 +181,7 @@ document.getElementById("form-curso").addEventListener("submit", function(e) {
 
   fetch(url, {
     method: metodo,
-    headers: { "Content-Type": "application/json" },
+    headers: getHeaders(),
     body: JSON.stringify(datos)
   })
   .then(() => {
@@ -181,21 +194,26 @@ document.getElementById("form-curso").addEventListener("submit", function(e) {
 });
 
 function editarCurso(id) {
-  fetch(`${API_URL}/${id}`)
-    .then(res => res.json())
-    .then(c => {
-      document.getElementById("cursoId").value = c.id;
-      document.getElementById("nombre").value = c.nombre;
-      document.getElementById("codigo").value = c.codigo;
-      document.getElementById("creditos").value = c.creditos;
-      document.getElementById("btn-submit").textContent = "Actualizar Curso";
-      document.getElementById("btn-cancelar").style.display = "inline-block";
-    });
+  fetch(`${API_URL}/${id}`, {
+    headers: getHeaders()
+  })
+  .then(res => res.json())
+  .then(c => {
+    document.getElementById("cursoId").value = c.id;
+    document.getElementById("nombre").value = c.nombre;
+    document.getElementById("codigo").value = c.codigo;
+    document.getElementById("creditos").value = c.creditos;
+    document.getElementById("btn-submit").textContent = "Actualizar Curso";
+    document.getElementById("btn-cancelar").style.display = "inline-block";
+  });
 }
 
 function eliminarCurso(id) {
   if (confirm("¿Eliminar este curso?")) {
-    fetch(`${API_URL}/${id}`, { method: "DELETE" }).then(() => cargarCursos());
+    fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      headers: getHeaders()
+    }).then(() => cargarCursos());
   }
 }
 
@@ -205,6 +223,12 @@ document.getElementById("btn-cancelar").addEventListener("click", function () {
   document.getElementById("btn-submit").textContent = "Agregar Curso";
   this.style.display = "none";
 });
+
+// Logout
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "login.html";
+}
 
 cargarCursos();
 </script>

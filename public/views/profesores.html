@@ -13,7 +13,6 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
     }
-
     .navbar {
       position: fixed;
       top: 0;
@@ -23,49 +22,40 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     }
-
     .navbar .nav-link {
       color: #ffffff !important;
       font-weight: 600;
       text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
       transition: color 0.3s ease;
     }
-
     .navbar .nav-link:hover {
       color: #ffc107 !important;
     }
-
     h2 {
       color: #fdfdfd;
       text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
     }
-
     .form-control, .btn {
       transition: all 0.3s ease;
     }
-
     .form-control:focus {
       box-shadow: 0 0 8px #0dcaf0;
       border-color: #0dcaf0;
     }
-
     .btn:hover {
       transform: scale(1.03);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     }
-
     .table {
       background-color: rgba(0, 0, 0, 0.3);
       color: #f8f9fa;
       border-radius: 10px;
       overflow: hidden;
     }
-
     .table thead {
       background-color: #0dcaf0;
       color: #000;
     }
-
     .container {
       background-color: rgba(0, 0, 0, 0.2);
       padding: 30px;
@@ -129,10 +119,36 @@
 
 <script>
 const API_URL = "http://127.0.0.1:8000/api/profesores";
+const token = localStorage.getItem("token");
+
+document.addEventListener("DOMContentLoaded", function () {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Debes iniciar sesión.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  cargarProfesores();
+});
+
+
+
+function getHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
+}
 
 function cargarProfesores() {
-  fetch(API_URL)
-    .then(res => res.json())
+  fetch(API_URL, {
+    headers: getHeaders()
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Error al obtener profesores");
+      return res.json();
+    })
     .then(data => {
       const tabla = document.getElementById("tabla-profesores");
       tabla.innerHTML = "";
@@ -150,7 +166,8 @@ function cargarProfesores() {
           </tr>
         `;
       });
-    });
+    })
+    .catch(err => console.error("Error al cargar profesores:", err));
 }
 
 document.getElementById("form-profesor").addEventListener("submit", function(e) {
@@ -168,7 +185,7 @@ document.getElementById("form-profesor").addEventListener("submit", function(e) 
 
   fetch(url, {
     method: metodo,
-    headers: { "Content-Type": "application/json" },
+    headers: getHeaders(),
     body: JSON.stringify(datos)
   })
   .then(res => res.json())
@@ -182,21 +199,26 @@ document.getElementById("form-profesor").addEventListener("submit", function(e) 
 });
 
 function editarProfesor(id) {
-  fetch(`${API_URL}/${id}`)
-    .then(res => res.json())
-    .then(p => {
-      document.getElementById("profesorId").value = p.id;
-      document.getElementById("nombre").value = p.nombre;
-      document.getElementById("correo").value = p.correo;
-      document.getElementById("especialidad").value = p.especialidad;
-      document.getElementById("btn-submit").textContent = "Actualizar Profesor";
-      document.getElementById("btn-cancelar").style.display = "inline-block";
-    });
+  fetch(`${API_URL}/${id}`, {
+    headers: getHeaders()
+  })
+  .then(res => res.json())
+  .then(p => {
+    document.getElementById("profesorId").value = p.id;
+    document.getElementById("nombre").value = p.nombre;
+    document.getElementById("correo").value = p.correo;
+    document.getElementById("especialidad").value = p.especialidad;
+    document.getElementById("btn-submit").textContent = "Actualizar Profesor";
+    document.getElementById("btn-cancelar").style.display = "inline-block";
+  });
 }
 
 function eliminarProfesor(id) {
   if (confirm("¿Estás seguro de eliminar este profesor?")) {
-    fetch(`${API_URL}/${id}`, { method: "DELETE" }).then(() => cargarProfesores());
+    fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      headers: getHeaders()
+    }).then(() => cargarProfesores());
   }
 }
 

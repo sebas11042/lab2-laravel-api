@@ -18,6 +18,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('profesores', ProfesorController::class);
     Route::apiResource('cursos', CursoController::class);
+    Route::get('/test-profesores', [TestController::class, 'index']); // ✅ esta es la nueva prueba
     Route::apiResource('aulas', AulaController::class);
     Route::post('/logout', [AuthController::class, 'logout']);
 });

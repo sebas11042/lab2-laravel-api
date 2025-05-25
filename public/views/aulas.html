@@ -13,7 +13,6 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
     }
-
     .navbar {
       position: fixed;
       top: 0;
@@ -23,49 +22,40 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     }
-
     .navbar .nav-link {
       color: #ffffff !important;
       font-weight: 600;
       text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
       transition: color 0.3s ease;
     }
-
     .navbar .nav-link:hover {
       color: #ffc107 !important;
     }
-
     h2 {
       color: #fdfdfd;
       text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
     }
-
     .form-control, .btn {
       transition: all 0.3s ease;
     }
-
     .form-control:focus {
       box-shadow: 0 0 8px #0dcaf0;
       border-color: #0dcaf0;
     }
-
     .btn:hover {
       transform: scale(1.03);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     }
-
     .table {
       background-color: rgba(0, 0, 0, 0.3);
       color: #f8f9fa;
       border-radius: 10px;
       overflow: hidden;
     }
-
     .table thead {
       background-color: #0dcaf0;
       color: #000;
     }
-
     .container {
       background-color: rgba(0, 0, 0, 0.2);
       padding: 30px;
@@ -88,6 +78,7 @@
         <li class="nav-item"><a class="nav-link" href="profesores.html">Profesores</a></li>
         <li class="nav-item"><a class="nav-link" href="cursos.html">Cursos</a></li>
         <li class="nav-item"><a class="nav-link" href="aulas.html">Aulas</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="cerrarSesion()">Cerrar sesión</a></li>
       </ul>
     </div>
   </div>
@@ -129,28 +120,42 @@
 
 <script>
 const API_URL = "http://127.0.0.1:8000/api/aulas";
+const token = localStorage.getItem("token");
+
+function getHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
+}
 
 function cargarAulas() {
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      const tabla = document.getElementById("tabla-aulas");
-      tabla.innerHTML = "";
-      data.forEach(a => {
-        tabla.innerHTML += `
-          <tr>
-            <td>${a.id}</td>
-            <td>${a.nombre}</td>
-            <td>${a.ubicacion}</td>
-            <td>${a.capacidad}</td>
-            <td>
-              <button class="btn btn-sm btn-warning" onclick="editarAula(${a.id})">Editar</button>
-              <button class="btn btn-sm btn-danger ms-2" onclick="eliminarAula(${a.id})">Eliminar</button>
-            </td>
-          </tr>
-        `;
-      });
+  fetch(API_URL, {
+    headers: getHeaders()
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Error al obtener aulas");
+    return res.json();
+  })
+  .then(data => {
+    const tabla = document.getElementById("tabla-aulas");
+    tabla.innerHTML = "";
+    data.forEach(a => {
+      tabla.innerHTML += `
+        <tr>
+          <td>${a.id}</td>
+          <td>${a.nombre}</td>
+          <td>${a.ubicacion}</td>
+          <td>${a.capacidad}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editarAula(${a.id})">Editar</button>
+            <button class="btn btn-sm btn-danger ms-2" onclick="eliminarAula(${a.id})">Eliminar</button>
+          </td>
+        </tr>
+      `;
     });
+  })
+  .catch(err => console.error("Error al cargar aulas:", err));
 }
 
 document.getElementById("form-aula").addEventListener("submit", function(e) {
@@ -168,7 +173,7 @@ document.getElementById("form-aula").addEventListener("submit", function(e) {
 
   fetch(url, {
     method: metodo,
-    headers: { "Content-Type": "application/json" },
+    headers: getHeaders(),
     body: JSON.stringify(datos)
   })
   .then(() => {
@@ -181,21 +186,26 @@ document.getElementById("form-aula").addEventListener("submit", function(e) {
 });
 
 function editarAula(id) {
-  fetch(`${API_URL}/${id}`)
-    .then(res => res.json())
-    .then(a => {
-      document.getElementById("aulaId").value = a.id;
-      document.getElementById("nombre").value = a.nombre;
-      document.getElementById("ubicacion").value = a.ubicacion;
-      document.getElementById("capacidad").value = a.capacidad;
-      document.getElementById("btn-submit").textContent = "Actualizar Aula";
-      document.getElementById("btn-cancelar").style.display = "inline-block";
-    });
+  fetch(`${API_URL}/${id}`, {
+    headers: getHeaders()
+  })
+  .then(res => res.json())
+  .then(a => {
+    document.getElementById("aulaId").value = a.id;
+    document.getElementById("nombre").value = a.nombre;
+    document.getElementById("ubicacion").value = a.ubicacion;
+    document.getElementById("capacidad").value = a.capacidad;
+    document.getElementById("btn-submit").textContent = "Actualizar Aula";
+    document.getElementById("btn-cancelar").style.display = "inline-block";
+  });
 }
 
 function eliminarAula(id) {
   if (confirm("¿Eliminar esta aula?")) {
-    fetch(`${API_URL}/${id}`, { method: "DELETE" }).then(() => cargarAulas());
+    fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      headers: getHeaders()
+    }).then(() => cargarAulas());
   }
 }
 
@@ -206,7 +216,24 @@ document.getElementById("btn-cancelar").addEventListener("click", function () {
   this.style.display = "none";
 });
 
-cargarAulas();
+function cerrarSesion() {
+  fetch("http://127.0.0.1:8000/api/logout", {
+    method: "POST",
+    headers: getHeaders()
+  }).then(() => {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  if (!token) {
+    alert("Debes iniciar sesión.");
+    window.location.href = "login.html";
+  } else {
+    cargarAulas();
+  }
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
