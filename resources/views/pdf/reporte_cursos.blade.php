@@ -10,8 +10,20 @@
             color: #333;
         }
 
-        h1 {
-            text-align: center;
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            height: 100px;
+            margin-right: 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
             color: #0d47a1;
         }
 
@@ -36,10 +48,12 @@
     </style>
 </head>
 <body>
+
     <div class="header">
-<img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('img/Logo_UCR.png'))) }}" alt="Logo UCR" style="height: 100px;">
-        <div class="title">Cursos disponibles</div>
+        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('img/Logo_UCR.png'))) }}" alt="Logo UCR">
+        <div class="title">Reporte de Cursos</div>
     </div>
+
     <table>
         <thead>
             <tr>
@@ -60,5 +74,6 @@
             @endforeach
         </tbody>
     </table>
+
 </body>
 </html>
