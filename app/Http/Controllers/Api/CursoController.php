@@ -3,14 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Curso;
 use Illuminate\Http\Request;
+use App\Models\Curso;
+use App\Models\Profesor;
+use App\Models\Aula;
 
 class CursoController extends Controller
 {
     public function index()
     {
-        return response()->json(Curso::all());
+        $cursos = Curso::all();
+
+        // Obtener profesores y aulas y organizarlos por ID para acceso rápido
+        $profesores = Profesor::all()->keyBy('id');
+        $aulas = Aula::all()->keyBy('id');
+
+        // Agregar los nombres de profesor y aula a cada curso
+        $cursos = $cursos->map(function ($curso) use ($profesores, $aulas) {
+            $curso->nombre_profesor = $profesores[$curso->profesor_id]->nombre ?? 'Sin asignar';
+            $curso->nombre_aula = $aulas[$curso->aula_id]->nombre ?? 'Sin asignar';
+            return $curso;
+        });
+
+        return response()->json($cursos);
     }
 
     public function store(Request $request)
