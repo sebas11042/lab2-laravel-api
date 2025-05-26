@@ -11,9 +11,9 @@ class ReporteController extends Controller
 {
     public function exportarCursos()
     {
-        $cursos = Curso::all();
+        $cursos = Curso::with('profesor', 'aula')->get();
         $pdf = Pdf::loadView('pdf.reporte_cursos', compact('cursos'));
-        return $pdf->stream('reporte_cursos.pdf'); // 👈 Mostrar en el navegador
+        return $pdf->stream('reporte_cursos.pdf'); 
     }
 
     public function exportarProfesores()

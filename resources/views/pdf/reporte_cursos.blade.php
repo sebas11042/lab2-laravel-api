@@ -6,23 +6,23 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             color: #333;
         }
 
         .header {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .header img {
-            height: 100px;
+            height: 80px;
             margin-right: 20px;
         }
 
         .title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #0d47a1;
         }
@@ -30,7 +30,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 25px;
+            margin-top: 15px;
         }
 
         table, th, td {
@@ -38,12 +38,19 @@
         }
 
         th, td {
-            padding: 10px;
+            padding: 8px;
             text-align: left;
         }
 
         th {
-            background-color: #dceefb;
+            background-color: #e3f2fd;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            text-align: center;
+            color: #888;
         }
     </style>
 </head>
@@ -57,10 +64,12 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Código</th>
-                <th>Créditos</th>
+                <th style="width: 5%;">ID</th>
+                <th style="width: 25%;">Nombre</th>
+                <th style="width: 15%;">Código</th>
+                <th style="width: 10%;">Créditos</th>
+                <th style="width: 25%;">Profesor</th>
+                <th style="width: 20%;">Aula</th>
             </tr>
         </thead>
         <tbody>
@@ -70,10 +79,16 @@
                     <td>{{ $curso->nombre }}</td>
                     <td>{{ $curso->codigo }}</td>
                     <td>{{ $curso->creditos }}</td>
+                    <td>{{ $curso->profesor->nombre ?? 'Sin asignar' }}</td>
+                    <td>{{ $curso->aula->nombre ?? 'Sin asignar' }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    <div class="footer">
+        Generado por el sistema - {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}
+    </div>
 
 </body>
 </html>

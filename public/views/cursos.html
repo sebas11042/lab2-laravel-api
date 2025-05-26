@@ -70,12 +70,11 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-<a class="navbar-brand" href="/index.html">
-  <img src="/img/Logo_UCR.png" alt="Logo" style="height: 75px;">
-</a>
+    <a class="navbar-brand" href="/index.html">
+      <img src="/img/Logo_UCR.png" alt="Logo" style="height: 75px;">
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -93,9 +92,11 @@
 <div class="container mt-3">
   <div class="d-flex justify-content-between align-items-center">
     <h2 class="mb-0">Gestión de Cursos</h2>
-    <a href="http://127.0.0.1:8000/api/reporte/cursos" class="btn btn-outline-light" target="_blank">
-      <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
-    </a>
+<div class="text-end mb-3">
+  <a href="http://127.0.0.1:8000/api/reporte/cursos" target="_blank" class="btn btn-success">
+    📄 Exportar PDF
+  </a>
+</div>
   </div>
 
   <form id="form-curso" class="mb-4 mt-3">
@@ -110,24 +111,33 @@
       <div class="col-md-4">
         <input type="number" id="creditos" class="form-control" placeholder="Créditos" required>
       </div>
+      <div class="col-md-6">
+        <select id="profesor_id" class="form-control" required>
+          <option value="">Seleccione un profesor</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <select id="aula_id" class="form-control" required>
+          <option value="">Seleccione un aula</option>
+        </select>
+      </div>
     </div>
     <button type="submit" class="btn btn-primary mt-3" id="btn-submit">Agregar Curso</button>
     <button type="button" class="btn btn-secondary mt-3 ms-2" id="btn-cancelar" style="display:none;">Cancelar edición</button>
   </form>
 
   <table class="table table-bordered table-striped">
-<thead>
-  <tr>
-    <th>ID</th>
-    <th>Nombre</th>
-    <th>Código</th>
-    <th>Créditos</th>
-    <th>Profesor</th>
-    <th>Aula</th>
-    <th>Acciones</th>
-  </tr>
-</thead>
-
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Código</th>
+        <th>Créditos</th>
+        <th>Profesor</th>
+        <th>Aula</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
     <tbody id="tabla-cursos"></tbody>
   </table>
 </div>
@@ -149,35 +159,54 @@ function getHeaders() {
 }
 
 function cargarCursos() {
-  fetch(API_URL, {
-    headers: getHeaders()
-  })
-  .then(res => res.json())
-  .then(data => {
-    const tabla = document.getElementById("tabla-cursos");
-    tabla.innerHTML = "";
-data.forEach(c => {
-  tabla.innerHTML += `
-    <tr>
-      <td>${c.id}</td>
-      <td>${c.nombre}</td>
-      <td>${c.codigo}</td>
-      <td>${c.creditos}</td>
-      <td>${c.nombre_profesor || 'No asignado'}</td>
-      <td>${c.nombre_aula || 'No asignado'}</td>
-      <td>
-        <button class="btn btn-sm btn-warning" onclick="editarCurso(${c.id})">Editar</button>
-        <button class="btn btn-sm btn-danger ms-2" onclick="eliminarCurso(${c.id})">Eliminar</button>
-      </td>
-    </tr>
-  `;
-});
+  fetch(API_URL, { headers: getHeaders() })
+    .then(res => res.json())
+    .then(data => {
+      const tabla = document.getElementById("tabla-cursos");
+      tabla.innerHTML = "";
+      data.forEach(c => {
+        tabla.innerHTML += `
+          <tr>
+            <td>${c.id}</td>
+            <td>${c.nombre}</td>
+            <td>${c.codigo}</td>
+            <td>${c.creditos}</td>
+            <td>${c.nombre_profesor || 'No asignado'}</td>
+            <td>${c.nombre_aula || 'No asignado'}</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="editarCurso(${c.id})">Editar</button>
+              <button class="btn btn-sm btn-danger ms-2" onclick="eliminarCurso(${c.id})">Eliminar</button>
+            </td>
+          </tr>
+        `;
+      });
+    })
+    .catch(err => {
+      console.error("Error al cargar cursos:", err);
+      alert("Error al cargar cursos. Verifica el token o vuelve a iniciar sesión.");
+    });
+}
 
-  })
-  .catch(err => {
-    console.error("Error al cargar cursos:", err);
-    alert("Error al cargar cursos. Verifica el token o vuelve a iniciar sesión.");
-  });
+function cargarProfesores() {
+  fetch("http://127.0.0.1:8000/api/profesores", { headers: getHeaders() })
+    .then(res => res.json())
+    .then(data => {
+      const select = document.getElementById("profesor_id");
+      data.forEach(p => {
+        select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+      });
+    });
+}
+
+function cargarAulas() {
+  fetch("http://127.0.0.1:8000/api/aulas", { headers: getHeaders() })
+    .then(res => res.json())
+    .then(data => {
+      const select = document.getElementById("aula_id");
+      data.forEach(a => {
+        select.innerHTML += `<option value="${a.id}">${a.nombre}</option>`;
+      });
+    });
 }
 
 document.getElementById("form-curso").addEventListener("submit", function(e) {
@@ -188,6 +217,8 @@ document.getElementById("form-curso").addEventListener("submit", function(e) {
     nombre: document.getElementById("nombre").value,
     codigo: document.getElementById("codigo").value,
     creditos: document.getElementById("creditos").value,
+    profesor_id: document.getElementById("profesor_id").value,
+    aula_id: document.getElementById("aula_id").value
   };
 
   const metodo = id ? "PUT" : "POST";
@@ -197,8 +228,7 @@ document.getElementById("form-curso").addEventListener("submit", function(e) {
     method: metodo,
     headers: getHeaders(),
     body: JSON.stringify(datos)
-  })
-  .then(() => {
+  }).then(() => {
     this.reset();
     document.getElementById("cursoId").value = "";
     document.getElementById("btn-submit").textContent = "Agregar Curso";
@@ -208,18 +238,18 @@ document.getElementById("form-curso").addEventListener("submit", function(e) {
 });
 
 function editarCurso(id) {
-  fetch(`${API_URL}/${id}`, {
-    headers: getHeaders()
-  })
-  .then(res => res.json())
-  .then(c => {
-    document.getElementById("cursoId").value = c.id;
-    document.getElementById("nombre").value = c.nombre;
-    document.getElementById("codigo").value = c.codigo;
-    document.getElementById("creditos").value = c.creditos;
-    document.getElementById("btn-submit").textContent = "Actualizar Curso";
-    document.getElementById("btn-cancelar").style.display = "inline-block";
-  });
+  fetch(`${API_URL}/${id}`, { headers: getHeaders() })
+    .then(res => res.json())
+    .then(c => {
+      document.getElementById("cursoId").value = c.id;
+      document.getElementById("nombre").value = c.nombre;
+      document.getElementById("codigo").value = c.codigo;
+      document.getElementById("creditos").value = c.creditos;
+      document.getElementById("profesor_id").value = c.profesor_id ?? "";
+      document.getElementById("aula_id").value = c.aula_id ?? "";
+      document.getElementById("btn-submit").textContent = "Actualizar Curso";
+      document.getElementById("btn-cancelar").style.display = "inline-block";
+    });
 }
 
 function eliminarCurso(id) {
@@ -244,6 +274,8 @@ function logout() {
 }
 
 cargarCursos();
+cargarProfesores();
+cargarAulas();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

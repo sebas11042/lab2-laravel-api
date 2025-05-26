@@ -80,6 +80,8 @@
         <li class="nav-item"><a class="nav-link" href="cursos.html">Cursos</a></li>
         <li class="nav-item"><a class="nav-link" href="profesores.html">Profesores</a></li>
         <li class="nav-item"><a class="nav-link" href="aulas.html">Aulas</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
+
       </ul>
     </div>
   </div>
@@ -236,6 +238,11 @@ document.getElementById("btn-cancelar").addEventListener("click", function () {
   document.getElementById("btn-submit").textContent = "Agregar Profesor";
   this.style.display = "none";
 });
+
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "login.html";
+}
 
 cargarProfesores();
 </script>

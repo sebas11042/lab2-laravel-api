@@ -12,17 +12,21 @@ class CursoController extends Controller
 {
     public function index()
     {
-        $cursos = Curso::all();
+        // Cargar cursos con las relaciones profesor y aula
+        $cursos = Curso::with('profesor', 'aula')->get();
 
-        // Obtener profesores y aulas y organizarlos por ID para acceso rápido
-        $profesores = Profesor::all()->keyBy('id');
-        $aulas = Aula::all()->keyBy('id');
-
-        // Agregar los nombres de profesor y aula a cada curso
-        $cursos = $cursos->map(function ($curso) use ($profesores, $aulas) {
-            $curso->nombre_profesor = $profesores[$curso->profesor_id]->nombre ?? 'Sin asignar';
-            $curso->nombre_aula = $aulas[$curso->aula_id]->nombre ?? 'Sin asignar';
-            return $curso;
+        // Transformar datos para incluir solo los campos que queremos mostrar
+        $cursos = $cursos->map(function ($curso) {
+            return [
+                'id' => $curso->id,
+                'nombre' => $curso->nombre,
+                'codigo' => $curso->codigo,
+                'creditos' => $curso->creditos,
+                'profesor_id' => $curso->profesor_id,
+                'aula_id' => $curso->aula_id,
+                'nombre_profesor' => $curso->profesor->nombre ?? 'Sin asignar',
+                'nombre_aula' => $curso->aula->nombre ?? 'Sin asignar',
+            ];
         });
 
         return response()->json($cursos);
@@ -34,6 +38,8 @@ class CursoController extends Controller
             'nombre' => 'required|string',
             'codigo' => 'required|string|unique:cursos',
             'creditos' => 'required|integer|min:1',
+            'profesor_id' => 'nullable|exists:profesores,id',
+            'aula_id' => 'nullable|exists:aulas,id',
         ]);
 
         $curso = Curso::create($request->all());
@@ -43,11 +49,30 @@ class CursoController extends Controller
 
     public function show($id)
     {
-        return response()->json(Curso::findOrFail($id));
+        $curso = Curso::with('profesor', 'aula')->findOrFail($id);
+
+        return response()->json([
+            'id' => $curso->id,
+            'nombre' => $curso->nombre,
+            'codigo' => $curso->codigo,
+            'creditos' => $curso->creditos,
+            'profesor_id' => $curso->profesor_id,
+            'aula_id' => $curso->aula_id,
+            'nombre_profesor' => $curso->profesor->nombre ?? 'Sin asignar',
+            'nombre_aula' => $curso->aula->nombre ?? 'Sin asignar',
+        ]);
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nombre' => 'required|string',
+            'codigo' => 'required|string|unique:cursos,codigo,' . $id,
+            'creditos' => 'required|integer|min:1',
+            'profesor_id' => 'nullable|exists:profesores,id',
+            'aula_id' => 'nullable|exists:aulas,id',
+        ]);
+
         $curso = Curso::findOrFail($id);
         $curso->update($request->all());
 
