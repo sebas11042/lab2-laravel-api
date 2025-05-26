@@ -116,15 +116,18 @@
   </form>
 
   <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Código</th>
-        <th>Créditos</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
+<thead>
+  <tr>
+    <th>ID</th>
+    <th>Nombre</th>
+    <th>Código</th>
+    <th>Créditos</th>
+    <th>Profesor</th>
+    <th>Aula</th>
+    <th>Acciones</th>
+  </tr>
+</thead>
+
     <tbody id="tabla-cursos"></tbody>
   </table>
 </div>
@@ -153,20 +156,23 @@ function cargarCursos() {
   .then(data => {
     const tabla = document.getElementById("tabla-cursos");
     tabla.innerHTML = "";
-    data.forEach(c => {
-      tabla.innerHTML += `
-        <tr>
-          <td>${c.id}</td>
-          <td>${c.nombre}</td>
-          <td>${c.codigo}</td>
-          <td>${c.creditos}</td>
-          <td>
-            <button class="btn btn-sm btn-warning" onclick="editarCurso(${c.id})">Editar</button>
-            <button class="btn btn-sm btn-danger ms-2" onclick="eliminarCurso(${c.id})">Eliminar</button>
-          </td>
-        </tr>
-      `;
-    });
+data.forEach(c => {
+  tabla.innerHTML += `
+    <tr>
+      <td>${c.id}</td>
+      <td>${c.nombre}</td>
+      <td>${c.codigo}</td>
+      <td>${c.creditos}</td>
+      <td>${c.nombre_profesor || 'No asignado'}</td>
+      <td>${c.nombre_aula || 'No asignado'}</td>
+      <td>
+        <button class="btn btn-sm btn-warning" onclick="editarCurso(${c.id})">Editar</button>
+        <button class="btn btn-sm btn-danger ms-2" onclick="eliminarCurso(${c.id})">Eliminar</button>
+      </td>
+    </tr>
+  `;
+});
+
   })
   .catch(err => {
     console.error("Error al cargar cursos:", err);
